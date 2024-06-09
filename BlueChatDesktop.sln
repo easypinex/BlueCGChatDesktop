@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueChatDesktop", "BlueChatDesktop\BlueChatDesktop.csproj", "{2CEADA5D-A56C-45A7-9CAF-C03A57105C24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CEADA5D-A56C-45A7-9CAF-C03A57105C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CEADA5D-A56C-45A7-9CAF-C03A57105C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CEADA5D-A56C-45A7-9CAF-C03A57105C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CEADA5D-A56C-45A7-9CAF-C03A57105C24}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5432213F-8FCE-4AF3-9322-7A5367C8F7ED}
+	EndGlobalSection
+EndGlobal
