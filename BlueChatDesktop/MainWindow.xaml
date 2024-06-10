@@ -37,8 +37,8 @@
 
         <Border Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <Grid>
-                <Grid Width="250">
-                        <TextBox  x:Name="FilterTextBox" Width="250"  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>
+                <Grid Width="250" HorizontalAlignment="Left" >
+                        <TextBox  x:Name="FilterTextBox" Width="150"  VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>
                         <TextBlock IsHitTestVisible="False" Text="搜尋..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
                             <TextBlock.Style>
                                 <Style TargetType="{x:Type TextBlock}">
