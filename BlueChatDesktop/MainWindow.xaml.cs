@@ -17,11 +17,13 @@ using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using TextBox = System.Windows.Controls.TextBox;
 using System;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace BlueChatDesktop
 {
     public partial class MainWindow : Window
     {
+        private List<string> _allMessages = new List<string>(); // 用于存储所有消息
         private DispatcherTimer _timer;
         private string _filePath;
         private string _folderPath;
@@ -181,24 +183,43 @@ namespace BlueChatDesktop
 
         private void AddChatMessage(string message, SolidColorBrush? customBrush = null)
         {
-            var textBrush = customBrush ?? _textBrush; // 使用传入的颜色，或者默认颜色
+            _allMessages.Add(message); // 添加到所有消息列表中
+            DisplayFilteredMessages(customBrush);
+        }
 
-            var textBlock = new TextBlock
+        private void DisplayFilteredMessages(SolidColorBrush? customBrush = null)
+        {
+            string filter = FilterTextBox.Text.ToLower();
+            ChatPanel.Children.Clear();
+
+            foreach (var message in _allMessages)
             {
-                Text = message,
-                Foreground = textBrush,
-                Margin = new Thickness(5),
-                FontSize = _defaultFontSize,
-                FontWeight = FontWeights.Bold,
-                TextWrapping = TextWrapping.Wrap
-            };
+                if (string.IsNullOrEmpty(filter) || message.ToLower().Contains(filter))
+                {
+                    var textBrush = customBrush ?? _textBrush; // 使用传入的颜色，或者默认颜色
+                    var textBlock = new TextBlock
+                    {
+                        Text = message,
+                        Foreground = textBrush,
+                        Margin = new Thickness(5),
+                        FontSize = _defaultFontSize,
+                        FontWeight = FontWeights.Bold,
+                        TextWrapping = TextWrapping.Wrap
+                    };
 
-            ChatPanel.Children.Add(textBlock);
+                    ChatPanel.Children.Add(textBlock);
+                }
+            }
 
             if (_autoScroll)
             {
                 ScrollToBottom();
             }
+        }
+
+        private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            DisplayFilteredMessages();
         }
 
         private void ScrollToBottom()

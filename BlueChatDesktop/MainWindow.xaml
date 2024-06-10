@@ -41,7 +41,26 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Border Background="Transparent" MouseLeftButtonDown="DragWindow" Grid.Column="0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
+
+                    <Grid>
+                        <TextBox  x:Name="FilterTextBox" Width="250"  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>
+                        <TextBlock IsHitTestVisible="False" Text="搜尋..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    
+                    
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
                     <Button Content="清空" Click="ClearChatButton_Click" Margin="5"  />
                     <Button Content="設置資料夾" Click="SelectFolderButton_Click" Margin="5"  />
@@ -50,6 +69,7 @@
                 </StackPanel>
             </Grid>
         </Border>
+
 
         <ScrollViewer Grid.Row="1" Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto">
             <StackPanel x:Name="ChatPanel" MaxWidth="{Binding ActualWidth, ElementName=ChatScrollViewer}">
