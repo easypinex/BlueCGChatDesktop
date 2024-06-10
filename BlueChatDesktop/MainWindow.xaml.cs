@@ -145,10 +145,10 @@ namespace BlueChatDesktop
                             line = line.Replace('', ' ');
 
                             SolidColorBrush colorBrush = GetColorForLine(cleanLine);
-                            if (line != _lastLineRead)
+                            if (cleanLine != _lastLineRead)
                             {
                                 AddChatMessage(line, colorBrush);
-                                _lastLineRead = line;
+                                _lastLineRead = cleanLine;
                             }
                         }
 
@@ -323,6 +323,7 @@ namespace BlueChatDesktop
         private void ClearChatButton_Click(object sender, RoutedEventArgs e)
         {
             ChatPanel.Children.Clear();
+            _allMessages.Clear();
             _filePath = GetLatestFile(_folderPath);
             InitializeFilePosition();
         }

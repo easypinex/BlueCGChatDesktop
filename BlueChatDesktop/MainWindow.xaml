@@ -55,7 +55,7 @@
                     
                     
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
-                    <Button Content="清空" Click="ClearChatButton_Click" Margin="5"  />
+                    <Button Content="重置" Click="ClearChatButton_Click" Margin="5"  />
                     <Button Content="設置資料夾" Click="SelectFolderButton_Click" Margin="5"  />
                     <Button Content="顏色設置" Click="SettingsButton_Click" Margin="5" />
                     <Button Content="關閉" Click="CloseButton_Click" Margin="5"  />
