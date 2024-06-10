@@ -59,13 +59,11 @@ namespace BlueChatDesktop
                     {
                         _backgroundBrush.Color = (Color)ColorConverter.ConvertFromString(settings.BackgroundColor);
                         MainGrid.Background = _backgroundBrush;
-                        BackgroundColorPicker.SelectedColor = _backgroundBrush.Color;
                     }
 
                     if (settings.TextColor != null)
                     {
                         _textBrush.Color = (Color)ColorConverter.ConvertFromString(settings.TextColor);
-                        TextColorPicker.SelectedColor = _textBrush.Color;
                     }
                 }
             }
@@ -107,6 +105,7 @@ namespace BlueChatDesktop
                         string line;
                         while ((line = streamReader.ReadLine()) != null)
                         {
+                            line = line.Replace('', '　');
                             if (line != _lastLineRead)
                             {
                                 AddChatMessage(line);
@@ -225,23 +224,22 @@ namespace BlueChatDesktop
             }
         }
 
-        private void BackgroundColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+
+        private void ClearChatButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.NewValue.HasValue)
-            {
-                var selectedColor = e.NewValue.Value;
-                _backgroundBrush.Color = selectedColor;
-                MainGrid.Background = _backgroundBrush;
-                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
-            }
+            ChatPanel.Children.Clear();
+            _filePath = GetLatestFile(_folderPath);
+            InitializeFilePosition();
         }
 
-        private void TextColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.NewValue.HasValue)
+            var settingsWindow = new SettingsWindow(_backgroundBrush.Color, _textBrush.Color);
+            if (settingsWindow.ShowDialog() == true)
             {
-                var selectedColor = e.NewValue.Value;
-                _textBrush.Color = selectedColor;
+                _backgroundBrush.Color = settingsWindow.SelectedBackgroundColor;
+                MainGrid.Background = _backgroundBrush;
+                _textBrush.Color = settingsWindow.SelectedTextColor;
                 foreach (var child in ChatPanel.Children)
                 {
                     if (child is TextBlock textBlock)
@@ -252,12 +250,6 @@ namespace BlueChatDesktop
                 SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
             }
         }
-
-        private void ClearChatButton_Click(object sender, RoutedEventArgs e)
-        {
-            ChatPanel.Children.Clear();
-        }
-
 
         private class Settings
         {
