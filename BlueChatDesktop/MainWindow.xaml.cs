@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -16,6 +15,8 @@ using Button = System.Windows.Controls.Button;
 using Color = System.Windows.Media.Color;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using TextBox = System.Windows.Controls.TextBox;
+using System;
+using System.Windows;
 
 namespace BlueChatDesktop
 {
@@ -32,11 +33,14 @@ namespace BlueChatDesktop
         private bool _autoScroll = true;
         private SolidColorBrush _backgroundBrush;
         private SolidColorBrush _textBrush;
+        private SolidColorBrush _gpBrush;
+        private SolidColorBrush _worldBrush;
+        private SolidColorBrush _familyBrush;
 
         public MainWindow()
         {
             InitializeComponent();
-            _backgroundBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AA87CEFA"));
+            _backgroundBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3C000000"));
             _textBrush = new SolidColorBrush(Colors.White);
             MainGrid.Background = _backgroundBrush;
             LoadSettings();
@@ -79,10 +83,23 @@ namespace BlueChatDesktop
                             }
                         }
                     }
+
+                    // 加载 GP、世界和家族颜色
+                    if (settings.GPColor != null)
+                    {
+                        _gpBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(settings.GPColor));
+                    }
+                    if (settings.WorldColor != null)
+                    {
+                        _worldBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(settings.WorldColor));
+                    }
+                    if (settings.FamilyColor != null)
+                    {
+                        _familyBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(settings.FamilyColor));
+                    }
                 }
             }
         }
-
 
         private void SetupTimer()
         {
@@ -122,7 +139,7 @@ namespace BlueChatDesktop
                         {
                             var cleanLine = line.Substring(10).TrimStart();
                             line = line.Replace('', ' ');
-                           
+
                             SolidColorBrush colorBrush = GetColorForLine(cleanLine);
                             if (line != _lastLineRead)
                             {
@@ -144,24 +161,22 @@ namespace BlueChatDesktop
 
         private SolidColorBrush GetColorForLine(string line)
         {
-            // 默认颜色
-            var defaultBrush = _textBrush;
-
             // 检查行的内容以确定颜色
             if (line.StartsWith("[GP]"))
             {
-                return new SolidColorBrush(Colors.Blue);
+                return _gpBrush;
             }
             else if (line.StartsWith("「世界」"))
             {
-                return new SolidColorBrush(Colors.Yellow);
+                return _worldBrush;
             }
             else if (line.StartsWith("[家族]"))
             {
-                return new SolidColorBrush(Colors.Purple);
+                return _familyBrush;
             }
 
-            return defaultBrush;
+            // 默认颜色
+            return _textBrush;
         }
 
         private void AddChatMessage(string message, SolidColorBrush? customBrush = null)
@@ -224,7 +239,7 @@ namespace BlueChatDesktop
                 {
                     var selectedPath = dialog.SelectedPath;
                     _filePath = GetLatestFile(selectedPath);
-                    
+
                     InitializeFilePosition();
 
                     // 获取当前字体大小
@@ -235,25 +250,26 @@ namespace BlueChatDesktop
                     }
 
                     // 调用保存设置方法，传递字体大小参数
-                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize);
+                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize, _gpBrush.Color.ToString(), _worldBrush.Color.ToString(), _familyBrush.Color.ToString());
                 }
             }
         }
 
-        private void SaveSettings(string folderPath, string backgroundColor, string textColor, double fontSize)
+        private void SaveSettings(string folderPath, string backgroundColor, string textColor, double fontSize, string gpColor, string worldColor, string familyColor)
         {
             var settings = new Settings
             {
                 BluecgFolder = folderPath,
                 BackgroundColor = backgroundColor,
                 TextColor = textColor,
-                FontSize = fontSize // 保存字体大小
+                FontSize = fontSize, // 保存字体大小
+                GPColor = gpColor,
+                WorldColor = worldColor,
+                FamilyColor = familyColor
             };
             var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
             File.WriteAllText(SettingFileName, json);
         }
-
-
 
         private string GetLatestFile(string folderPath)
         {
@@ -268,7 +284,7 @@ namespace BlueChatDesktop
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
@@ -278,7 +294,6 @@ namespace BlueChatDesktop
                 this.DragMove();
             }
         }
-
 
         private void ClearChatButton_Click(object sender, RoutedEventArgs e)
         {
@@ -291,7 +306,8 @@ namespace BlueChatDesktop
         {
             var currentFontSize = _defaultFontSize; // 默認字體大小
 
-            var settingsWindow = new SettingsWindow(_backgroundBrush.Color, _textBrush.Color, currentFontSize);
+            var settingsWindow = new SettingsWindow(_backgroundBrush.Color, _textBrush.Color, currentFontSize,
+                _gpBrush?.Color, _worldBrush?.Color, _familyBrush?.Color);
 
             // 获取屏幕工作区的大小
             var screenWidth = SystemParameters.WorkArea.Width;
@@ -334,13 +350,19 @@ namespace BlueChatDesktop
                         tb.FontSize = settingsWindow.SelectedFontSize; // 更新字体大小
                     }
                 }
+
+                _gpBrush = settingsWindow.SelectedGPColor.HasValue ? new SolidColorBrush(settingsWindow.SelectedGPColor.Value) : null;
+                _worldBrush = settingsWindow.SelectedWorldColor.HasValue ? new SolidColorBrush(settingsWindow.SelectedWorldColor.Value) : null;
+                _familyBrush = settingsWindow.SelectedFamilyColor.HasValue ? new SolidColorBrush(settingsWindow.SelectedFamilyColor.Value) : null;
+
                 _defaultFontSize = (int)settingsWindow.SelectedFontSize;
                 // 保存字体大小和其他设置
-                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), settingsWindow.SelectedFontSize);
+                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), settingsWindow.SelectedFontSize,
+                    _gpBrush == null ? null : _gpBrush.Color.ToString(),
+                    _worldBrush == null ? null : _worldBrush.Color.ToString(),
+                    _familyBrush == null ? null : _familyBrush.Color.ToString());
             }
         }
-
-
 
         private class Settings
         {
@@ -348,7 +370,9 @@ namespace BlueChatDesktop
             public string BackgroundColor { get; set; }
             public string TextColor { get; set; }
             public double FontSize { get; set; } // 添加字体大小属性
+            public string GPColor { get; set; }
+            public string WorldColor { get; set; }
+            public string FamilyColor { get; set; }
         }
-
     }
 }
