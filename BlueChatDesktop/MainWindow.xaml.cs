@@ -120,10 +120,13 @@ namespace BlueChatDesktop
                         string line;
                         while ((line = streamReader.ReadLine()) != null)
                         {
-                            line = line.Replace('', '　');
+                            var cleanLine = line.Substring(10).TrimStart();
+                            line = line.Replace('', ' ');
+                           
+                            SolidColorBrush colorBrush = GetColorForLine(cleanLine);
                             if (line != _lastLineRead)
                             {
-                                AddChatMessage(line);
+                                AddChatMessage(line, colorBrush);
                                 _lastLineRead = line;
                             }
                         }
@@ -139,12 +142,36 @@ namespace BlueChatDesktop
             }
         }
 
-        private void AddChatMessage(string message)
+        private SolidColorBrush GetColorForLine(string line)
         {
+            // 默认颜色
+            var defaultBrush = _textBrush;
+
+            // 检查行的内容以确定颜色
+            if (line.StartsWith("[GP]"))
+            {
+                return new SolidColorBrush(Colors.Blue);
+            }
+            else if (line.StartsWith("「世界」"))
+            {
+                return new SolidColorBrush(Colors.Yellow);
+            }
+            else if (line.StartsWith("[家族]"))
+            {
+                return new SolidColorBrush(Colors.Purple);
+            }
+
+            return defaultBrush;
+        }
+
+        private void AddChatMessage(string message, SolidColorBrush? customBrush = null)
+        {
+            var textBrush = customBrush ?? _textBrush; // 使用传入的颜色，或者默认颜色
+
             var textBlock = new TextBlock
             {
                 Text = message,
-                Foreground = _textBrush,
+                Foreground = textBrush,
                 Margin = new Thickness(5),
                 FontSize = _defaultFontSize,
                 FontWeight = FontWeights.Bold,
