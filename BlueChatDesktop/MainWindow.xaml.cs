@@ -4,11 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Newtonsoft.Json;
-using System.Windows.Shell;
-using System.Windows.Forms;
+using Xceed.Wpf.Toolkit;
+using Application = System.Windows.Application;
+using Button = System.Windows.Controls.Button;
+using Color = System.Windows.Media.Color;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace BlueChatDesktop
 {
@@ -16,15 +22,21 @@ namespace BlueChatDesktop
     {
         private DispatcherTimer _timer;
         private string _filePath;
+        private string _folderPath;
         private DateTime _lastReadTime = DateTime.MinValue;
         private long _lastReadPosition = 0;
         private string _lastLineRead = string.Empty;
         private const string SettingFileName = "setting.json";
         private bool _autoScroll = true;
+        private SolidColorBrush _backgroundBrush;
+        private SolidColorBrush _textBrush;
 
         public MainWindow()
         {
             InitializeComponent();
+            _backgroundBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AA87CEFA"));
+            _textBrush = new SolidColorBrush(Colors.White);
+            MainGrid.Background = _backgroundBrush;
             LoadSettings();
             SetupTimer();
         }
@@ -35,10 +47,26 @@ namespace BlueChatDesktop
             {
                 var json = File.ReadAllText(SettingFileName);
                 var settings = JsonConvert.DeserializeObject<Settings>(json);
-                if (settings != null && !string.IsNullOrEmpty(settings.BluecgFolder))
+                if (settings != null)
                 {
-                    _filePath = GetLatestFile(settings.BluecgFolder);
-                    InitializeFilePosition();
+                    if (!string.IsNullOrEmpty(settings.BluecgFolder))
+                    {
+                        _filePath = GetLatestFile(settings.BluecgFolder);
+                        InitializeFilePosition();
+                    }
+
+                    if (settings.BackgroundColor != null)
+                    {
+                        _backgroundBrush.Color = (Color)ColorConverter.ConvertFromString(settings.BackgroundColor);
+                        MainGrid.Background = _backgroundBrush;
+                        BackgroundColorPicker.SelectedColor = _backgroundBrush.Color;
+                    }
+
+                    if (settings.TextColor != null)
+                    {
+                        _textBrush.Color = (Color)ColorConverter.ConvertFromString(settings.TextColor);
+                        TextColorPicker.SelectedColor = _textBrush.Color;
+                    }
                 }
             }
         }
@@ -102,7 +130,7 @@ namespace BlueChatDesktop
             var textBlock = new TextBlock
             {
                 Text = message,
-                Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White),
+                Foreground = _textBrush,
                 Margin = new Thickness(5),
                 FontSize = 16,
                 FontWeight = FontWeights.Bold,
@@ -124,13 +152,11 @@ namespace BlueChatDesktop
 
         private void ChatScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            // 用户是否在最底部
             if (e.ExtentHeightChange == 0)
             {
                 _autoScroll = ChatScrollViewer.VerticalOffset == ChatScrollViewer.ScrollableHeight;
             }
 
-            // 新内容到达底部
             if (_autoScroll && e.ExtentHeightChange != 0)
             {
                 ChatScrollViewer.ScrollToVerticalOffset(ChatScrollViewer.ExtentHeight);
@@ -158,16 +184,18 @@ namespace BlueChatDesktop
                     var selectedPath = dialog.SelectedPath;
                     _filePath = GetLatestFile(selectedPath);
                     InitializeFilePosition();
-                    SaveSettings(selectedPath);
+                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
                 }
             }
         }
 
-        private void SaveSettings(string folderPath)
+        private void SaveSettings(string folderPath, string backgroundColor, string textColor)
         {
             var settings = new Settings
             {
-                BluecgFolder = folderPath
+                BluecgFolder = folderPath,
+                BackgroundColor = backgroundColor,
+                TextColor = textColor
             };
             var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
             File.WriteAllText(SettingFileName, json);
@@ -179,13 +207,14 @@ namespace BlueChatDesktop
             var latestFile = directoryInfo.GetFiles()
                                           .OrderByDescending(f => f.LastWriteTime)
                                           .FirstOrDefault();
+            _folderPath = folderPath;
 
             return latestFile?.FullName;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Application.Current.Shutdown();
+            Application.Current.Shutdown();
         }
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
@@ -196,9 +225,45 @@ namespace BlueChatDesktop
             }
         }
 
+        private void BackgroundColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (e.NewValue.HasValue)
+            {
+                var selectedColor = e.NewValue.Value;
+                _backgroundBrush.Color = selectedColor;
+                MainGrid.Background = _backgroundBrush;
+                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
+            }
+        }
+
+        private void TextColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (e.NewValue.HasValue)
+            {
+                var selectedColor = e.NewValue.Value;
+                _textBrush.Color = selectedColor;
+                foreach (var child in ChatPanel.Children)
+                {
+                    if (child is TextBlock textBlock)
+                    {
+                        textBlock.Foreground = _textBrush;
+                    }
+                }
+                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
+            }
+        }
+
+        private void ClearChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            ChatPanel.Children.Clear();
+        }
+
+
         private class Settings
         {
             public string BluecgFolder { get; set; }
+            public string BackgroundColor { get; set; }
+            public string TextColor { get; set; }
         }
     }
 }

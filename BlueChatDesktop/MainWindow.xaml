@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BlueChatDesktop"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="MainWindow"
         WindowStyle="None"
@@ -28,13 +29,13 @@
             CornerRadius="0"
             UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
-    <Grid Background="#AA87CEFA">
+    <Grid Name="MainGrid" Background="#AA87CEFA">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#FF000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Border Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -42,14 +43,14 @@
                 </Grid.ColumnDefinitions>
                 <Border Background="Transparent" MouseLeftButtonDown="DragWindow" Grid.Column="0"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+                    <Button Content="清空" Click="ClearChatButton_Click" Margin="5"  />
                     <Button Content="選擇魔力Log資料夾" Click="SelectFolderButton_Click" Margin="5"  />
+                    <TextBlock Text="背景顏色：" Foreground="White" VerticalAlignment="Center" Margin="5"/>
+                    <xctk:ColorPicker Name="BackgroundColorPicker" SelectedColorChanged="BackgroundColorPicker_SelectedColorChanged" Margin="5"/>
+                    <TextBlock Text="文字顏色：" Foreground="White" VerticalAlignment="Center" Margin="5"/>
+                    <xctk:ColorPicker Name="TextColorPicker" SelectedColorChanged="TextColorPicker_SelectedColorChanged" Margin="5"/>
+                    <Button Content="設置" Click="SettingsButton_Click" Margin="5" />
                     <Button Content="關閉" Click="CloseButton_Click" Margin="5"  />
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="背景顏色：" Foreground="White" VerticalAlignment="Center" Margin="5"/>
-                        <xctk:ColorPicker Name="ColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged" Margin="5"/>
-                        <TextBlock Text="透明度：" Foreground="White" VerticalAlignment="Center" Margin="5"/>
-                        <Slider Name="OpacitySlider" Minimum="0" Maximum="1" Value="1" TickFrequency="0.1" ValueChanged="OpacitySlider_ValueChanged" Width="100" Margin="5"/>
-                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Border>
