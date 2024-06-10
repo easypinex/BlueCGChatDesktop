@@ -271,7 +271,7 @@ namespace BlueChatDesktop
                     }
 
                     // 调用保存设置方法，传递字体大小参数
-                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize, _gpBrush.Color.ToString(), _worldBrush.Color.ToString(), _familyBrush.Color.ToString());
+                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize, _gpBrush?.Color.ToString(), _worldBrush?.Color.ToString(), _familyBrush?.Color.ToString());
                 }
             }
         }
