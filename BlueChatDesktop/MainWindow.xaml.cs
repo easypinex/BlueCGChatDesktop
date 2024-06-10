@@ -18,6 +18,8 @@ using TextBox = System.Windows.Controls.TextBox;
 using System;
 using System.Windows;
 using System.Collections.Generic;
+using System.Windows.Shapes;
+using static System.Windows.Forms.LinkLabel;
 
 namespace BlueChatDesktop
 {
@@ -164,15 +166,15 @@ namespace BlueChatDesktop
         private SolidColorBrush GetColorForLine(string line)
         {
             // 检查行的内容以确定颜色
-            if (line.StartsWith("[GP]"))
+            if (line.StartsWith("[GP]") && _gpBrush != null)
             {
                 return _gpBrush;
             }
-            else if (line.StartsWith("「世界」"))
+            else if (line.StartsWith("「世界」") && _worldBrush != null)
             {
                 return _worldBrush;
             }
-            else if (line.StartsWith("[家族]"))
+            else if (line.StartsWith("[家族]") && _familyBrush != null)
             {
                 return _familyBrush;
             }
@@ -184,19 +186,21 @@ namespace BlueChatDesktop
         private void AddChatMessage(string message, SolidColorBrush? customBrush = null)
         {
             _allMessages.Add(message); // 添加到所有消息列表中
-            DisplayFilteredMessages(customBrush);
+            DisplayFilteredMessages();
         }
 
-        private void DisplayFilteredMessages(SolidColorBrush? customBrush = null)
+        private void DisplayFilteredMessages()
         {
             string filter = FilterTextBox.Text.ToLower();
             ChatPanel.Children.Clear();
-
+            
             foreach (var message in _allMessages)
             {
+                var cleanLine = message.Substring(10).TrimStart();
                 if (string.IsNullOrEmpty(filter) || message.ToLower().Contains(filter))
                 {
-                    var textBrush = customBrush ?? _textBrush; // 使用传入的颜色，或者默认颜色
+                    SolidColorBrush colorBrush = GetColorForLine(cleanLine);
+                    var textBrush = colorBrush; // 使用传入的颜色，或者默认颜色
                     var textBlock = new TextBlock
                     {
                         Text = message,
@@ -382,6 +386,7 @@ namespace BlueChatDesktop
                     _gpBrush == null ? null : _gpBrush.Color.ToString(),
                     _worldBrush == null ? null : _worldBrush.Color.ToString(),
                     _familyBrush == null ? null : _familyBrush.Color.ToString());
+                DisplayFilteredMessages();
             }
         }
 
