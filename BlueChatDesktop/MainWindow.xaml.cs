@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Newtonsoft.Json;
 using Xceed.Wpf.Toolkit;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Application = System.Windows.Application;
 using Button = System.Windows.Controls.Button;
 using Color = System.Windows.Media.Color;
@@ -25,6 +26,7 @@ namespace BlueChatDesktop
         private string _folderPath;
         private DateTime _lastReadTime = DateTime.MinValue;
         private long _lastReadPosition = 0;
+        private int _defaultFontSize = 16;
         private string _lastLineRead = string.Empty;
         private const string SettingFileName = "setting.json";
         private bool _autoScroll = true;
@@ -65,9 +67,22 @@ namespace BlueChatDesktop
                     {
                         _textBrush.Color = (Color)ColorConverter.ConvertFromString(settings.TextColor);
                     }
+
+                    // 添加字体大小设置
+                    if (settings.FontSize > 0)
+                    {
+                        foreach (var child in ChatPanel.Children)
+                        {
+                            if (child is TextBlock textBlock)
+                            {
+                                textBlock.FontSize = settings.FontSize;
+                            }
+                        }
+                    }
                 }
             }
         }
+
 
         private void SetupTimer()
         {
@@ -131,7 +146,7 @@ namespace BlueChatDesktop
                 Text = message,
                 Foreground = _textBrush,
                 Margin = new Thickness(5),
-                FontSize = 16,
+                FontSize = _defaultFontSize,
                 FontWeight = FontWeights.Bold,
                 TextWrapping = TextWrapping.Wrap
             };
@@ -182,23 +197,36 @@ namespace BlueChatDesktop
                 {
                     var selectedPath = dialog.SelectedPath;
                     _filePath = GetLatestFile(selectedPath);
+                    
                     InitializeFilePosition();
-                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
+
+                    // 获取当前字体大小
+                    double currentFontSize = _defaultFontSize; // 
+                    if (ChatPanel.Children.Count > 0 && ChatPanel.Children[0] is TextBlock textBlock)
+                    {
+                        currentFontSize = textBlock.FontSize;
+                    }
+
+                    // 调用保存设置方法，传递字体大小参数
+                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize);
                 }
             }
         }
 
-        private void SaveSettings(string folderPath, string backgroundColor, string textColor)
+        private void SaveSettings(string folderPath, string backgroundColor, string textColor, double fontSize)
         {
             var settings = new Settings
             {
                 BluecgFolder = folderPath,
                 BackgroundColor = backgroundColor,
-                TextColor = textColor
+                TextColor = textColor,
+                FontSize = fontSize // 保存字体大小
             };
             var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
             File.WriteAllText(SettingFileName, json);
         }
+
+
 
         private string GetLatestFile(string folderPath)
         {
@@ -234,28 +262,66 @@ namespace BlueChatDesktop
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow(_backgroundBrush.Color, _textBrush.Color);
+            var currentFontSize = _defaultFontSize; // 默認字體大小
+
+            var settingsWindow = new SettingsWindow(_backgroundBrush.Color, _textBrush.Color, currentFontSize);
+
+            // 获取屏幕工作区的大小
+            var screenWidth = SystemParameters.WorkArea.Width;
+            var screenHeight = SystemParameters.WorkArea.Height;
+
+            // 计算设置窗口的位置，使其尽可能靠近主窗口但不重叠
+            double left = this.Left + this.Width;
+            double top = this.Top;
+
+            // 如果设置窗口在屏幕右边缘之外，则将其放在主窗口左边
+            if (left + settingsWindow.Width > screenWidth)
+            {
+                left = this.Left - settingsWindow.Width;
+            }
+
+            // 如果设置窗口在屏幕下边缘之外，则将其放在主窗口上边
+            if (top + settingsWindow.Height > screenHeight)
+            {
+                top = this.Top - settingsWindow.Height;
+            }
+
+            // 确保设置窗口在屏幕范围内
+            if (left < 0) left = 0;
+            if (top < 0) top = 0;
+
+            settingsWindow.Left = left;
+            settingsWindow.Top = top;
+
             if (settingsWindow.ShowDialog() == true)
             {
                 _backgroundBrush.Color = settingsWindow.SelectedBackgroundColor;
                 MainGrid.Background = _backgroundBrush;
                 _textBrush.Color = settingsWindow.SelectedTextColor;
+
                 foreach (var child in ChatPanel.Children)
                 {
-                    if (child is TextBlock textBlock)
+                    if (child is TextBlock tb)
                     {
-                        textBlock.Foreground = _textBrush;
+                        tb.Foreground = _textBrush;
+                        tb.FontSize = settingsWindow.SelectedFontSize; // 更新字体大小
                     }
                 }
-                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString());
+                _defaultFontSize = (int)settingsWindow.SelectedFontSize;
+                // 保存字体大小和其他设置
+                SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), settingsWindow.SelectedFontSize);
             }
         }
+
+
 
         private class Settings
         {
             public string BluecgFolder { get; set; }
             public string BackgroundColor { get; set; }
             public string TextColor { get; set; }
+            public double FontSize { get; set; } // 添加字体大小属性
         }
+
     }
 }
