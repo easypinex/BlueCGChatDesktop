@@ -23,13 +23,13 @@
     </Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome
-            CaptionHeight="3"
+            CaptionHeight="5"
             ResizeBorderThickness="5"
             GlassFrameThickness="0"
             CornerRadius="0"
             UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
-    <Grid Name="MainGrid" Background="#3C000000">
+    <Grid Name="MainGrid" Background="#3C000000" MouseDown="DragWindow">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -37,13 +37,7 @@
 
         <Border Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
-
-                    <Grid>
+                <Grid Width="250">
                         <TextBox  x:Name="FilterTextBox" Width="250"  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>
                         <TextBlock IsHitTestVisible="False" Text="搜尋..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
                             <TextBlock.Style>
@@ -57,10 +51,9 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                    </Grid>
+                 </Grid>
                     
                     
-                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
                     <Button Content="清空" Click="ClearChatButton_Click" Margin="5"  />
                     <Button Content="設置資料夾" Click="SelectFolderButton_Click" Margin="5"  />
@@ -71,8 +64,8 @@
         </Border>
 
 
-        <ScrollViewer Grid.Row="1" Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="ChatPanel" MaxWidth="{Binding ActualWidth, ElementName=ChatScrollViewer}">
+        <ScrollViewer Grid.Row="1" Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto" MouseDown="DragWindow">
+            <StackPanel x:Name="ChatPanel" MaxWidth="{Binding ActualWidth, ElementName=ChatScrollViewer}" MouseDown="DragWindow">
             </StackPanel>
         </ScrollViewer>
     </Grid>
