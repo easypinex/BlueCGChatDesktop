@@ -319,12 +319,12 @@ namespace BlueChatDesktop
                     }
 
                     // 调用保存设置方法，传递字体大小参数
-                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize, _gpBrush?.Color.ToString(), _worldBrush?.Color.ToString(), _familyBrush?.Color.ToString());
+                    SaveSettings(selectedPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), currentFontSize, _gpBrush?.Color.ToString(), _worldBrush?.Color.ToString(), _familyBrush?.Color.ToString(), _autoHideControlBar);
                 }
             }
         }
 
-        private void SaveSettings(string folderPath, string backgroundColor, string textColor, double fontSize, string gpColor, string worldColor, string familyColor)
+        private void SaveSettings(string folderPath, string backgroundColor, string textColor, double fontSize, string gpColor, string worldColor, string familyColor, bool autoHideControlBar)
         {
             var settings = new Settings
             {
@@ -335,7 +335,7 @@ namespace BlueChatDesktop
                 GPColor = gpColor,
                 WorldColor = worldColor,
                 FamilyColor = familyColor,
-                AutoHideControlBar = _autoHideControlBar
+                AutoHideControlBar = autoHideControlBar
             };
             var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
             File.WriteAllText(SettingFileName, json);
@@ -432,7 +432,8 @@ namespace BlueChatDesktop
                 SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), settingsWindow.SelectedFontSize,
                     _gpBrush == null ? null : _gpBrush.Color.ToString(),
                     _worldBrush == null ? null : _worldBrush.Color.ToString(),
-                    _familyBrush == null ? null : _familyBrush.Color.ToString());
+                    _familyBrush == null ? null : _familyBrush.Color.ToString(),
+                    _autoHideControlBar);
                 DisplayFilteredMessages();
             }
         }
