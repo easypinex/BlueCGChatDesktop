@@ -41,6 +41,11 @@ namespace BlueChatDesktop
         private SolidColorBrush _worldBrush;
         private SolidColorBrush _familyBrush;
 
+        // 自動隱藏控制列變數
+        private DispatcherTimer _mouseActivityTimer;
+        private bool _isMouseOverApp = false;
+        private bool _autoHideControlBar = true; // 控制是否啟用自動隱藏控制列
+
         public MainWindow()
         {
             InitializeComponent();
@@ -49,7 +54,42 @@ namespace BlueChatDesktop
             MainGrid.Background = _backgroundBrush;
             LoadSettings();
             SetupTimer();
+            SetupMouseActivityTimer();
         }
+        private void SetupMouseActivityTimer()
+        {
+            _mouseActivityTimer = new DispatcherTimer();
+            _mouseActivityTimer.Interval = TimeSpan.FromSeconds(3);
+            _mouseActivityTimer.Tick += MouseActivityTimer_Tick;
+            _mouseActivityTimer.Start();
+
+            this.MouseMove += MainWindow_MouseMove;
+            this.MouseLeave += MainWindow_MouseLeave;
+        }
+
+        private void MainWindow_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _isMouseOverApp = true;
+            ControlBar.Visibility = Visibility.Visible; // 顯示控制列
+            _mouseActivityTimer.Stop();
+            _mouseActivityTimer.Start(); // 重置計時器
+        }
+
+        private void MainWindow_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _isMouseOverApp = false;
+            _mouseActivityTimer.Stop();
+            _mouseActivityTimer.Start(); // 重置計時器
+        }
+
+        private void MouseActivityTimer_Tick(object sender, EventArgs e)
+        {
+            if (!_isMouseOverApp && _autoHideControlBar)
+            {
+                ControlBar.Visibility = Visibility.Collapsed; // 隱藏控制列
+            }
+        }
+
 
         private void LoadSettings()
         {
@@ -101,6 +141,8 @@ namespace BlueChatDesktop
                     {
                         _familyBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(settings.FamilyColor));
                     }
+
+                    _autoHideControlBar = settings.AutoHideControlBar ?? true; // 默认为 true
                 }
             }
         }
@@ -141,6 +183,8 @@ namespace BlueChatDesktop
                         string line;
                         while ((line = streamReader.ReadLine()) != null)
                         {
+                            if (line.Length < 10)
+                                continue;
                             var cleanLine = line.Substring(10).TrimStart();
                             line = line.Replace('', ' ');
 
@@ -174,7 +218,7 @@ namespace BlueChatDesktop
             {
                 return _worldBrush;
             }
-            else if (line.StartsWith("[家族]") && _familyBrush != null)
+            else if (line.StartsWith("[家族") && _familyBrush != null)
             {
                 return _familyBrush;
             }
@@ -290,7 +334,8 @@ namespace BlueChatDesktop
                 FontSize = fontSize, // 保存字体大小
                 GPColor = gpColor,
                 WorldColor = worldColor,
-                FamilyColor = familyColor
+                FamilyColor = familyColor,
+                AutoHideControlBar = _autoHideControlBar
             };
             var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
             File.WriteAllText(SettingFileName, json);
@@ -333,7 +378,7 @@ namespace BlueChatDesktop
             var currentFontSize = _defaultFontSize; // 默認字體大小
 
             var settingsWindow = new SettingsWindow(_backgroundBrush.Color, _textBrush.Color, currentFontSize,
-                _gpBrush?.Color, _worldBrush?.Color, _familyBrush?.Color);
+                _gpBrush?.Color, _worldBrush?.Color, _familyBrush?.Color, _autoHideControlBar);
 
             // 获取屏幕工作区的大小
             var screenWidth = SystemParameters.WorkArea.Width;
@@ -382,6 +427,7 @@ namespace BlueChatDesktop
                 _familyBrush = settingsWindow.SelectedFamilyColor.HasValue ? new SolidColorBrush(settingsWindow.SelectedFamilyColor.Value) : null;
 
                 _defaultFontSize = (int)settingsWindow.SelectedFontSize;
+                _autoHideControlBar = settingsWindow.AutoHideControlBar;
                 // 保存字体大小和其他设置
                 SaveSettings(_folderPath, _backgroundBrush.Color.ToString(), _textBrush.Color.ToString(), settingsWindow.SelectedFontSize,
                     _gpBrush == null ? null : _gpBrush.Color.ToString(),
@@ -400,6 +446,7 @@ namespace BlueChatDesktop
             public string GPColor { get; set; }
             public string WorldColor { get; set; }
             public string FamilyColor { get; set; }
+            public bool? AutoHideControlBar { get; set; }
         }
     }
 }

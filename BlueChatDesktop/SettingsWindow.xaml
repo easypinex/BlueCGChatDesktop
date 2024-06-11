@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="Settings" Height="400" Width="400"
+        Title="Settings" Height="450" Width="400"
         WindowStartupLocation="Manual">
     <Grid>
         <StackPanel>
@@ -76,10 +76,14 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="家族 顏色：" Foreground="Black" VerticalAlignment="Center" Margin="5" Grid.Column="0"/>
-                    <CheckBox Name="FamilyColorCheckBox" Content="使用自訂顏色" VerticalAlignment="Center" Margin="5" Grid.Column="2" Checked="FamilyColorCheckBox_Checked" Unchecked="FamilyColorCheckBox_Unchecked"/>
+                    <CheckBox Name="FamilyColorCheckBox" Content="使用自訂顏色" VerticalAlignment="Center" Margin="5" Grid.Column="2" Checked="AutoHideControlBarCheckBox_Checked" Unchecked="AutoHideControlBarCheckBox_Unchecked"/>
                     <xctk:ColorPicker Name="FamilyColorPicker" SelectedColorChanged="FamilyColorPicker_SelectedColorChanged" Margin="5" Grid.Column="1"/>
+                    
                 </Grid>
+                
             </StackPanel>
+            <CheckBox Name="AutoHideControlBarCheckBox" Content="自動隱藏控制列" VerticalAlignment="Center" Margin="10" Checked="AutoHideControlBarCheckBox_Checked" Unchecked="AutoHideControlBarCheckBox_Unchecked"/>
+
             <Button Content="保存" Click="SaveButton_Click" Margin="10" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>

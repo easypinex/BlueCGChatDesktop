@@ -35,7 +35,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Border x:Name="ControlBar" Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <Grid>
                 <Grid Width="250" HorizontalAlignment="Left" >
                         <TextBox  x:Name="FilterTextBox" Width="150"  VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>

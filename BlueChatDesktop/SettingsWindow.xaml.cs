@@ -11,8 +11,9 @@ namespace BlueChatDesktop
         public Color? SelectedGPColor { get; private set; }
         public Color? SelectedWorldColor { get; private set; }
         public Color? SelectedFamilyColor { get; private set; }
+        public bool AutoHideControlBar { get; private set; }
 
-        public SettingsWindow(Color currentBackgroundColor, Color currentTextColor, double currentFontSize, Color? gpColor, Color? worldColor, Color? familyColor)
+        public SettingsWindow(Color currentBackgroundColor, Color currentTextColor, double currentFontSize, Color? gpColor, Color? worldColor, Color? familyColor, bool autoHideControlBar)
         {
             InitializeComponent();
             BackgroundColorPicker.SelectedColor = currentBackgroundColor;
@@ -31,6 +32,9 @@ namespace BlueChatDesktop
             FamilyColorPicker.SelectedColor = familyColor ?? Colors.Purple;
             FamilyColorPicker.IsEnabled = familyColor.HasValue;
             FamilyColorCheckBox.IsChecked = familyColor.HasValue;
+
+            AutoHideControlBarCheckBox.IsChecked = autoHideControlBar;
+            AutoHideControlBar = autoHideControlBar;
         }
 
         private void BackgroundColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -117,6 +121,16 @@ namespace BlueChatDesktop
         {
             FamilyColorPicker.IsEnabled = false;
             SelectedFamilyColor = null;
+        }
+
+        private void AutoHideControlBarCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            AutoHideControlBar = true;
+        }
+
+        private void AutoHideControlBarCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AutoHideControlBar = false;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
