@@ -76,7 +76,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="家族 顏色：" Foreground="Black" VerticalAlignment="Center" Margin="5" Grid.Column="0"/>
-                    <CheckBox Name="FamilyColorCheckBox" Content="使用自訂顏色" VerticalAlignment="Center" Margin="5" Grid.Column="2" Checked="AutoHideControlBarCheckBox_Checked" Unchecked="AutoHideControlBarCheckBox_Unchecked"/>
+                    <CheckBox Name="FamilyColorCheckBox" Content="使用自訂顏色" VerticalAlignment="Center" Margin="5" Grid.Column="2" Checked="FamilyColorCheckBox_Checked" Unchecked="FamilyColorCheckBox_Unchecked"/>
                     <xctk:ColorPicker Name="FamilyColorPicker" SelectedColorChanged="FamilyColorPicker_SelectedColorChanged" Margin="5" Grid.Column="1"/>
                     
                 </Grid>

@@ -29,7 +29,7 @@
             CornerRadius="0"
             UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
-    <Grid Name="MainGrid" Background="#3C000000" MouseDown="DragWindow">
+    <Grid Name="MainGrid" Background="#50000000" MouseDown="DragWindow">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
