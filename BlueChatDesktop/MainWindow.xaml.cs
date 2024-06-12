@@ -126,6 +126,7 @@ namespace BlueChatDesktop
                                 textBlock.FontSize = settings.FontSize;
                             }
                         }
+                        _defaultFontSize = (int) settings.FontSize;
                     }
 
                     // 加载 GP、世界和家族颜色
@@ -343,6 +344,7 @@ namespace BlueChatDesktop
 
         private string GetLatestFile(string folderPath)
         {
+            if (folderPath == null) return null;
             var directoryInfo = new DirectoryInfo(folderPath);
             var latestFile = directoryInfo.GetFiles()
                                           .OrderByDescending(f => f.LastWriteTime)
