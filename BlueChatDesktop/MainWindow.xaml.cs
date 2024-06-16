@@ -71,6 +71,7 @@ namespace BlueChatDesktop
         {
             _isMouseOverApp = true;
             ControlBar.Visibility = Visibility.Visible; // 顯示控制列
+            ChatScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             _mouseActivityTimer.Stop();
             _mouseActivityTimer.Start(); // 重置計時器
         }
@@ -87,6 +88,7 @@ namespace BlueChatDesktop
             if (!_isMouseOverApp && _autoHideControlBar)
             {
                 ControlBar.Visibility = Visibility.Collapsed; // 隱藏控制列
+                ChatScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden; // 隐藏滚动条
             }
         }
 
