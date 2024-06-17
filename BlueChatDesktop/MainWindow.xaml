@@ -1,72 +1,25 @@
-﻿<Window x:Class="BlueChatDesktop.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BlueChatDesktop"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        mc:Ignorable="d"
-        Title="MainWindow"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        WindowStartupLocation="Manual"
-        Height="450"
-        Width="800"
-        Loaded="Window_Loaded"
-        Topmost="True">
-    <Window.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-    </Window.Resources>
-    <WindowChrome.WindowChrome>
-        <WindowChrome
-            CaptionHeight="5"
-            ResizeBorderThickness="5"
-            GlassFrameThickness="0"
-            CornerRadius="0"
-            UseAeroCaptionButtons="False"/>
-    </WindowChrome.WindowChrome>
-    <Grid Name="MainGrid" Background="#50000000" MouseDown="DragWindow">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <Border x:Name="ControlBar" Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <Grid>
-                <Grid Width="250" HorizontalAlignment="Left" >
-                    <TextBox x:Name="FilterTextBox" Width="150" Height="30"  VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>
-                    <TextBlock IsHitTestVisible="False" Text="搜尋..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
-                        <TextBlock.Style>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                 </Grid>
-                    
-                    
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
-                    <Button Content="重置" Click="ClearChatButton_Click" Margin="5"  />
-                    <Button Content="設置資料夾" Click="SelectFolderButton_Click" Margin="5"  />
-                    <Button Content="顏色設置" Click="SettingsButton_Click" Margin="5" />
-                    <Button Content="關閉" Click="CloseButton_Click" Margin="5"  />
-                </StackPanel>
-            </Grid>
-        </Border>
-
-
-        <ScrollViewer Grid.Row="1" Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto" MouseDown="DragWindow">
-            <StackPanel x:Name="ChatPanel" MaxWidth="{Binding ActualWidth, ElementName=ChatScrollViewer}" MouseDown="DragWindow">
-            </StackPanel>
-        </ScrollViewer>
-    </Grid>
-</Window>
+﻿<Window x:Class="BlueChatDesktop.MainWindow"        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        xmlns:local="clr-namespace:BlueChatDesktop"        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"        mc:Ignorable="d"        Title="MainWindow"        WindowStyle="None"        AllowsTransparency="True"        Background="Transparent"        WindowStartupLocation="Manual"        Height="450"        Width="800"        Loaded="Window_Loaded"        Topmost="True">    <Window.Resources>        <Style TargetType="TextBlock">            <Setter Property="FontSize" Value="16"/>            <Setter Property="FontWeight" Value="Bold"/>        </Style>    </Window.Resources>    <WindowChrome.WindowChrome>        <WindowChrome            CaptionHeight="5"            ResizeBorderThickness="5"            GlassFrameThickness="0"            CornerRadius="0"            UseAeroCaptionButtons="False"/>    </WindowChrome.WindowChrome>    <Grid Name="MainGrid" Background="#50000000" MouseDown="DragWindow">        <Grid.RowDefinitions>            <RowDefinition Height="Auto"/>            <RowDefinition Height="*"/>        </Grid.RowDefinitions>        <Border x:Name="ControlBar" Grid.Row="0" Background="#32000000" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top">            <Grid>                <Grid Width="250" HorizontalAlignment="Left" >                    <TextBox x:Name="FilterTextBox" Width="150" Height="30"  VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="5" TextChanged="FilterTextBox_TextChanged"/>                    <TextBlock IsHitTestVisible="False" Text="搜尋..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">                        <TextBlock.Style>                                <Style TargetType="{x:Type TextBlock}">                                    <Setter Property="Visibility" Value="Collapsed"/>                                    <Style.Triggers>                                        <DataTrigger Binding="{Binding Text, ElementName=FilterTextBox}" Value="">                                            <Setter Property="Visibility" Value="Visible"/>                                        </DataTrigger>                                    </Style.Triggers>                                </Style>                            </TextBlock.Style>                        </TextBlock>                 </Grid>                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">                    <Button Width="35" Height="30" Click="ClearChatButton_Click" Margin="5" >
+                        <Button.Content>
+                            <StackPanel>
+                                <Image Source="Icon\reset.png" Width="20" Height="20"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>                    <Button Width="35" Height="30" Click="SelectFolderButton_Click" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <Image Source="Icon\folder.png" Width="20" Height="20"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>                    <Button Width="35" Height="30" Click="SettingsButton_Click" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <Image Source="Icon\settings.png" Width="20" Height="20"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>                    <Button Width="35" Height="30" Click="CloseButton_Click" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <Image Source="Icon\close.png" Width="20" Height="20"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>                </StackPanel>            </Grid>        </Border>        <ScrollViewer Grid.Row="1" Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto" MouseDown="DragWindow">            <StackPanel x:Name="ChatPanel" MaxWidth="{Binding ActualWidth, ElementName=ChatScrollViewer}" MouseDown="DragWindow">            </StackPanel>        </ScrollViewer>    </Grid></Window>
